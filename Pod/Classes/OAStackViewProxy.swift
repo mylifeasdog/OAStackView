@@ -8,9 +8,9 @@
 
 import UIKit
 
-@objc public class OAStackViewProxy: UIView {
+@objc open class OAStackViewProxy: UIView {
     public init() {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         if #available(iOS 9, *) {
             installFullScreenView(nativeStackView)
         } else {
@@ -19,7 +19,7 @@ import UIKit
     }
 
     public init(arrangedSubviews: [UIView]) {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         if #available(iOS 9, *) {
             installFullScreenView(nativeStackView)
             arrangedSubviews.forEach({ (view) in nativeStackView.addArrangedSubview(view) })
@@ -31,7 +31,7 @@ import UIKit
 
     public required init?(coder aDecoder: NSCoder) { fatalError("Unimplemented.") }
 
-    public var arrangedSubviews: [UIView] {
+    open var arrangedSubviews: [UIView] {
         if #available(iOS 9, *) {
             return nativeStackView.arrangedSubviews
         } else {
@@ -39,7 +39,7 @@ import UIKit
         }
     }
 
-    public func addArrangedSubview(view: UIView) {
+    open func addArrangedSubview(_ view: UIView) {
         if #available(iOS 9, *) {
             nativeStackView.addArrangedSubview(view)
         } else {
@@ -47,7 +47,7 @@ import UIKit
         }
     }
 
-    public func removeArrangedSubview(view: UIView) {
+    open func removeArrangedSubview(_ view: UIView) {
         if #available(iOS 9, *) {
             nativeStackView.removeArrangedSubview(view)
         } else {
@@ -55,7 +55,7 @@ import UIKit
         }
     }
 
-    public var axis: UILayoutConstraintAxis = .Horizontal {
+    open var axis: UILayoutConstraintAxis = .horizontal {
         didSet {
             if #available(iOS 9, *) {
                 nativeStackView.axis = axis
@@ -65,7 +65,7 @@ import UIKit
         }
     }
 
-    public var distribution: OAStackViewDistribution = .Fill {
+    open var distribution: OAStackViewDistribution = .fill {
         didSet {
             if #available(iOS 9, *) {
                 nativeStackView.distribution = UIStackViewDistribution(distribution: distribution)
@@ -75,7 +75,7 @@ import UIKit
         }
     }
 
-    public var alignment: OAStackViewAlignment = .Fill {
+    open var alignment: OAStackViewAlignment = .fill {
         didSet {
             if #available(iOS 9, *) {
                 nativeStackView.alignment = UIStackViewAlignment(alignment: alignment)
@@ -85,7 +85,7 @@ import UIKit
         }
     }
 
-    public var spacing: CGFloat = 0.0 {
+    open var spacing: CGFloat = 0.0 {
         didSet {
             if #available(iOS 9, *) {
                 nativeStackView.spacing = spacing
@@ -95,30 +95,30 @@ import UIKit
         }
     }
 
-    public var baselineRelativeArrangement: Bool = false {
+    open var baselineRelativeArrangement: Bool = false {
         didSet {
             if #available(iOS 9, *) {
-                nativeStackView.baselineRelativeArrangement = baselineRelativeArrangement
+                nativeStackView.isBaselineRelativeArrangement = baselineRelativeArrangement
             }
         }
     }
 
-    public var layoutMarginsRelativeArrangement: Bool = false {
+    open var layoutMarginsRelativeArrangement: Bool = false {
         didSet {
             if #available(iOS 9, *) {
-                nativeStackView.layoutMarginsRelativeArrangement = layoutMarginsRelativeArrangement
+                nativeStackView.isLayoutMarginsRelativeArrangement = layoutMarginsRelativeArrangement
             }
         }
     }
 
     @available(iOS 9.0, *)
-    private lazy var nativeStackView: UIStackView = {
+    fileprivate lazy var nativeStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
 
-    private lazy var backwardsCompatibleStackView: OAStackView = {
+    fileprivate lazy var backwardsCompatibleStackView: OAStackView = {
         let stackView = OAStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
@@ -127,7 +127,7 @@ import UIKit
 
 @available(iOS 8, *)
 public extension OAStackViewProxy {
-    public override var layoutMargins: UIEdgeInsets {
+    open override var layoutMargins: UIEdgeInsets {
         didSet {
             if #available(iOS 9, *) {
                 nativeStackView.layoutMargins = layoutMargins
@@ -142,18 +142,18 @@ public extension OAStackViewProxy {
 private extension UIStackViewAlignment {
     init(alignment: OAStackViewAlignment) {
         switch alignment {
-        case .Fill:
-            self = .Fill
-        case .Leading:
-            self = .Leading
-        case .FirstBaseline:
-            self = .FirstBaseline
-        case .Center:
-            self = .Center
-        case .Trailing:
-            self = .Trailing
-        case .Baseline:
-            self = .FirstBaseline
+        case .fill:
+            self = .fill
+        case .leading:
+            self = .leading
+        case .firstBaseline:
+            self = .firstBaseline
+        case .center:
+            self = .center
+        case .trailing:
+            self = .trailing
+        case .baseline:
+            self = .firstBaseline
         }
     }
 }
@@ -162,27 +162,27 @@ private extension UIStackViewAlignment {
 private extension UIStackViewDistribution {
     init(distribution: OAStackViewDistribution) {
         switch distribution {
-        case .Fill:
-            self = .Fill
-        case .FillEqually:
-            self = .FillEqually
-        case .FillProportionally:
-            self = .FillProportionally
-        case .EqualSpacing:
-            self = .EqualSpacing
-        case .EqualCentering:
-            self = .EqualCentering
+        case .fill:
+            self = .fill
+        case .fillEqually:
+            self = .fillEqually
+        case .fillProportionally:
+            self = .fillProportionally
+        case .equalSpacing:
+            self = .equalSpacing
+        case .equalCentering:
+            self = .equalCentering
         }
     }
 }
 
 private extension UIView {
-    func installFullScreenView(view: UIView) {
+    func installFullScreenView(_ view: UIView) {
         addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
 
         let views = ["view": view]
-        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views))
-        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: views))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|", options: [], metrics: nil, views: views))
     }
 }
